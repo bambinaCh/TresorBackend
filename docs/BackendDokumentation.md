@@ -1,79 +1,61 @@
-# BackendDokumentation zu Tresor App
+# Backend-Dokumentation zur Tresor-App
 
-## Passwortsicherheit: Hashing, Salt & Pepper
+## Passwortsicherheit mit Hashing, Salt und Pepper
 
 ### Was ist ein Hash?
-Ein Hash ist eine Einweg-Funktion, mit der sensible Daten in einen scheinbar zufälligen Wert umgewandelt werden. Der Hash kann **nicht** zurückgerechnet werden.
+Ein Hash ist eine Einweg-Funktion, die ein Passwort in eine scheinbar zufällige Zeichenkette umwandelt. Der Hash kann nicht zurückgerechnet werden. Dadurch bleiben Passwoerter auch bei einem Datenbankleck geheim – sofern korrekt gehasht.
+
 ### Was ist Salt?
-Salt ist ein zufälliger Wert, der **für jeden Benutzer individuell generiert** wird. Er wird dem Passwort hinzugefügt, bevor es gehasht wird. Dadurch verhindern wir sogenannte Rainbow-Table-Angriffe.
+Salt ist ein zufaelliger Wert, der vor dem Hashen zum Passwort hinzugefuegt wird. Er sorgt dafuer, dass selbst identische Passwoerter unterschiedliche Hashes erzeugen.  
+Bei der Verwendung von `BCrypt` wird der Salt automatisch generiert und im Hash mitgespeichert.
 
 ### Was ist Pepper?
-Pepper ist ein **geheimer, systemweiter Schlüssel**, der **nicht in der Datenbank**, sondern im Server (z. B. in `application.properties`) gespeichert wird. Er wird ebenfalls zum Passwort hinzugefügt, um Brute-Force-Angriffe zu erschweren.
+Pepper ist ein zusaetzlicher geheimer Schluessel, der systemweit definiert ist – zum Beispiel im Code oder in der `application.properties`. Er wird vor dem Hashing an das Passwort angehaengt, ist jedoch **nicht in der Datenbank gespeichert**.  
+Er erhoeht die Sicherheit bei Brute-Force- oder Rainbow-Table-Angriffen zusaetzlich.
 
 ---
 
-## Warum diese Methode?
+## Warum wird diese Methode eingesetzt?
 
-Die Anwendung soll Secrets und Zugangsdaten speichern – also besonders schützenswerte Daten. Daher dürfen Passwörter **niemals im Klartext** gespeichert werden.
+Die Tresor-App speichert hochsensible Daten wie Passwoerter, Logins oder Kreditkarteninformationen. Deshalb ist es absolut notwendig, dass Benutzerpasswoerter **niemals im Klartext gespeichert** werden.
 
-Ich habe mich für die Kombination aus **Salt + Pepper + Hashing** entschieden, weil das aktuell ein bewährter Standard ist.
+Die Kombination von `BCrypt` mit Pepper bietet:
+- Schutz gegen Rainbow Tables
+- Schutz vor Brute-Force-Angriffen
+- Automatische Verwendung von Salt
 
 ---
 
 ## Verwendeter Algorithmus
 
-Ich verwende in dieser Implementierung den Algorithmus **PBKDF2WithHmacSHA256** mit Salt und Pepper. Alternativ wären auch `bcrypt`, `scrypt` oder `Argon2` möglich – aber PBKDF2 ist weit verbreitet und gut unterstützt in Java/Spring Boot.
+In dieser Anwendung wird der Algorithmus `BCrypt` verwendet. Er ist:
+- in Spring Boot direkt unterstuetzt (`org.springframework.security.crypto.bcrypt.BCrypt`)
+- langsam genug fuer Sicherheit (Schutz vor schnellen Angriffsversuchen)
+- automatisch mit Salt ausgestattet
 
 ---
 
-## Ablauf Registrierung
+## Ablauf bei Registrierung
 
-1. User gibt Username und Passwort ein
-2. Backend generiert ein Salt (z. B. 16 Bytes random)
-3. Passwort + Salt + Pepper → Hashfunktion
-4. Speichern in DB:
-    - `username`
-    - `hashedPassword`
-    - `salt`
+1. Der Benutzer gibt ein Passwort ein.
+2. Das Passwort wird mit dem Pepper kombiniert: `passwort + pepper`
+3. `BCrypt.hashpw()` generiert den Hash (inkl. Salt)
+4. Der Hash wird in der Datenbank gespeichert.
 
 ---
 
-## Ablauf Login
+## Ablauf bei Login
 
-1. User gibt Username und Passwort ein
-2. Backend holt Salt & gespeicherten Hash
-3. Passwort + Salt + Pepper → Hashfunktion
-4. Vergleich: aktueller Hash == gespeicherter Hash → Login erlaubt
-
----
-
-## Migration bestehender Klartextpasswörter
-
-Ein separates Skript ersetzt alle Klartextpasswörter durch sichere Hashes mit Salt & Pepper. Danach sind keine unverschlüsselten Passwörter mehr in der DB.
+1. Der Benutzer gibt sein Passwort ein.
+2. Das eingegebene Passwort wird erneut mit dem Pepper kombiniert.
+3. `BCrypt.checkpw()` vergleicht das Ergebnis mit dem gespeicherten Hash.
+4. Stimmen die Hashes ueberein, ist der Login erfolgreich.
 
 ---
 
-## Anwendung von `Pepper` in Spring Boot
+## Anwendung von Pepper in Spring Boot
 
-In `application.properties`:
+In `application.properties` kann der Pepper wie folgt definiert werden:
 
 ```properties
 tresor.pepper=G3h31@%20asj!
-```
-
-## Essenz
-## Passwort Hashing mit Salt und Pepper
-
-### Warum?
-Klartext-Passwörter in einer Datenbank sind ein enormes Sicherheitsrisiko. Ein Hashing-Verfahren mit Salt und Pepper schützt gegen Rainbow Tables und Datenlecks.
-
-### Was wurde gemacht?
-- Beim Registrieren wird das Passwort mit einer globalen Pepper ergänzt und mit BCrypt gehashed.
-- Beim Login wird das eingegebene Passwort ebenfalls mit der Pepper kombiniert und gegen den gespeicherten Hash geprüft.
-- BCrypt verwendet automatisch einen Salt.
-- Die Klasse `PasswordEncryptionService` kapselt das Verfahren.
-
-### Beispiel:
-```java
-BCrypt.hashpw(password + pepper, BCrypt.gensalt());
-
