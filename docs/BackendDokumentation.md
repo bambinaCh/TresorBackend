@@ -38,7 +38,7 @@ Ich verwende in dieser Implementierung den Algorithmus **PBKDF2WithHmacSHA256** 
 
 ---
 
-## 🔐 Ablauf Login
+## Ablauf Login
 
 1. User gibt Username und Passwort ein
 2. Backend holt Salt & gespeicherten Hash
@@ -47,13 +47,13 @@ Ich verwende in dieser Implementierung den Algorithmus **PBKDF2WithHmacSHA256** 
 
 ---
 
-## 🔄 Migration bestehender Klartextpasswörter
+## Migration bestehender Klartextpasswörter
 
 Ein separates Skript ersetzt alle Klartextpasswörter durch sichere Hashes mit Salt & Pepper. Danach sind keine unverschlüsselten Passwörter mehr in der DB.
 
 ---
 
-## 🔍 Anwendung von `Pepper` in Spring Boot
+## Anwendung von `Pepper` in Spring Boot
 
 In `application.properties`:
 
