@@ -59,3 +59,21 @@ In `application.properties`:
 
 ```properties
 tresor.pepper=G3h31@%20asj!
+```
+
+## Essenz
+## Passwort Hashing mit Salt und Pepper
+
+### Warum?
+Klartext-Passwörter in einer Datenbank sind ein enormes Sicherheitsrisiko. Ein Hashing-Verfahren mit Salt und Pepper schützt gegen Rainbow Tables und Datenlecks.
+
+### Was wurde gemacht?
+- Beim Registrieren wird das Passwort mit einer globalen Pepper ergänzt und mit BCrypt gehashed.
+- Beim Login wird das eingegebene Passwort ebenfalls mit der Pepper kombiniert und gegen den gespeicherten Hash geprüft.
+- BCrypt verwendet automatisch einen Salt.
+- Die Klasse `PasswordEncryptionService` kapselt das Verfahren.
+
+### Beispiel:
+```java
+BCrypt.hashpw(password + pepper, BCrypt.gensalt());
+

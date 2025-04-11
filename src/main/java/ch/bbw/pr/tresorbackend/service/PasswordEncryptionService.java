@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 /**
  * PasswordEncryptionService
  * @author Peter Rutschmann
+ * @author Chaimaa El Jarite
  */
 @Service
 public class PasswordEncryptionService {
