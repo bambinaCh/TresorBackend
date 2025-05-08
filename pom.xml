@@ -19,6 +19,7 @@
         <maven.compiler.target>17</maven.compiler.target>
     </properties>
     <dependencies>
+
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-crypto</artifactId>

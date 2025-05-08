@@ -1,6 +1,7 @@
 package ch.bbw.pr.tresorbackend.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 
 /**
  * PasswordEncryptionService
