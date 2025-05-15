@@ -15,7 +15,7 @@ Er erhoeht die Sicherheit bei Brute-Force- oder Rainbow-Table-Angriffen zusaetzl
 
 ---
 
-## Warum wird diese Methode eingesetzt?
+### Warum wird diese Methode eingesetzt?
 
 Die Tresor-App speichert hochsensible Daten wie Passwoerter, Logins oder Kreditkarteninformationen. Deshalb ist es absolut notwendig, dass Benutzerpasswoerter **niemals im Klartext gespeichert** werden.
 
@@ -32,6 +32,10 @@ In dieser Anwendung wird der Algorithmus `BCrypt` verwendet. Er ist:
 - in Spring Boot direkt unterstuetzt (`org.springframework.security.crypto.bcrypt.BCrypt`)
 - langsam genug fuer Sicherheit (Schutz vor schnellen Angriffsversuchen)
 - automatisch mit Salt ausgestattet
+
+### Was ist BCrypt?
+
+Ein kryptografischer Hashing-Algorithmus, der speziell für die sichere Speicherung von Passwörtern entwickelt wurde.
 
 
 ### Warum nicht SHA-256 oder MD5?
