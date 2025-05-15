@@ -90,3 +90,46 @@ public ResponseEntity<User> registerUser(@RequestBody User newUser) {
 }
 ```
 
+### Wo wird das Secret verschlüsselt und entschlüsselt?
+Die Verschlüsselung und Entschlüsselung passiert im SecretController.java. Und zwar hier:
+
+🔐 Verschlüsselung beim Speichern
+```
+String encrypted = new EncryptUtil(newSecret.getEncryptPassword()).encrypt(newSecret.getContent().toString());
+
+Secret secret = new Secret(
+null,
+user.getId(),
+encrypted
+);
+
+secretService.createSecret(secret);
+```
+🔸 Das passiert in der Methode createSecret2(...)
+🔸 Der Klartext (JsonNode content) wird mit dem Passwort (encryptPassword) verschlüsselt
+🔸 Danach wird encrypted (als String) in der DB gespeichert – das ist korrekt
+
+
+### Speicherung von Secrets in der Datenbank
+Secrets wie Notizen, Kreditkarten oder Passwörter werden verschlüsselt gespeichert
+
+Dafür verwenden wir eine symmetrische Verschlüsselung mit AES (Advanced Encryption Standard)
+
+Ablauf:
+- Benutzer gibt ein Passwort ein, das nur zum Verschlüsseln dient (encryptPassword)
+
+- Aus diesem Passwort wird ein AES-Schlüssel abgeleitet
+
+- Der Secret-Inhalt wird verschlüsselt und als Base64-Text gespeichert
+
+- Beim Abruf wird derselbe Schlüssel verwendet, um den Inhalt wieder zu entschlüsseln
+
+### Warum AES und kein Hash?
+Weil der Inhalt wiederhergestellt werden muss (also entschlüsselt, nicht nur überprüft)
+
+Hashing ist eine Einwegfunktion, Verschlüsselung ist umkehrbar
+
+### Sicherheitshinweis:
+Das Verschlüsselungspasswort sollte nicht identisch mit dem Login-Passwort sein
+
+Der AES-Schlüssel wird nie gespeichert, sondern aus Benutzereingabe erzeugt
