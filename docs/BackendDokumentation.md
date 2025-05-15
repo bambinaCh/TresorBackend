@@ -3,14 +3,14 @@
 ## Passwortsicherheit mit Hashing, Salt und Pepper
 
 ### Was ist ein Hash?
-Ein Hash ist eine Einweg-Funktion, die ein Passwort in eine scheinbar zufällige Zeichenkette umwandelt. Der Hash kann nicht zurückgerechnet werden. Dadurch bleiben Passwoerter auch bei einem Datenbankleck geheim – sofern korrekt gehasht.
+EEinweg-Funktion, die ein Passwort in eine scheinbar zufällige Zeichenkette umwandelt. Der Hash kann nicht zurückgerechnet werden. 
 
 ### Was ist Salt?
-Salt ist ein zufaelliger Wert, der vor dem Hashen zum Passwort hinzugefuegt wird. Er sorgt dafuer, dass selbst identische Passwoerter unterschiedliche Hashes erzeugen.  
+Zufaelliger Wert, der vor dem Hashen zum Passwort hinzugefuegt wird. Er sorgt dafuer, dass selbst identische Passwoerter unterschiedliche Hashes erzeugen.  
 Bei der Verwendung von `BCrypt` wird der Salt automatisch generiert und im Hash mitgespeichert.
 
 ### Was ist Pepper?
-Pepper ist ein zusaetzlicher geheimer Schluessel, der systemweit definiert ist – zum Beispiel im Code oder in der `application.properties`. Er wird vor dem Hashing an das Passwort angehaengt, ist jedoch **nicht in der Datenbank gespeichert**.  
+Pepper ist ein zusaetzlicher geheimer Schluessel,Code oder in der `application.properties`. Er wird vor dem Hashing an das Passwort angehaengt, ist jedoch **nicht in der Datenbank gespeichert**.  
 Er erhoeht die Sicherheit bei Brute-Force- oder Rainbow-Table-Angriffen zusaetzlich.
 
 ---
@@ -32,6 +32,13 @@ In dieser Anwendung wird der Algorithmus `BCrypt` verwendet. Er ist:
 - in Spring Boot direkt unterstuetzt (`org.springframework.security.crypto.bcrypt.BCrypt`)
 - langsam genug fuer Sicherheit (Schutz vor schnellen Angriffsversuchen)
 - automatisch mit Salt ausgestattet
+
+
+### Warum nicht SHA-256 oder MD5?
+Hash-Verfahren wie SHA-256 oder MD5 sind für Geschwindigkeit optimiert – was bei Passwörtern ein Nachteil ist:
+- Sie sind **viel zu schnell**
+- Können mit GPUs sehr effizient „gecrackt“ werden
+- Haben **kein eingebautes Salt**
 
 ---
 
