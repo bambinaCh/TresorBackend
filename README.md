@@ -26,7 +26,7 @@ see [application.properties](src/main/resources/application.properties)
 see Dockerfile
 
 ```Bash
-docker build -t tresorbackendimg .
+    docker build -t tresorbackendimg .
 ```
 
 
@@ -34,7 +34,7 @@ docker build -t tresorbackendimg .
 ## Start container local
 
 ```Bash
-docker run -p 8080:8080 --name tresorbackend tresorbackendimg
+    docker run -p 8080:8080 --name tresorbackend tresorbackendimg
 ```
 
 (c) P.Rutschmann

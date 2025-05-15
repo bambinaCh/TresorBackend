@@ -59,3 +59,23 @@ In `application.properties` kann der Pepper wie folgt definiert werden:
 
 ```properties
 tresor.pepper=G3h31@%20asj!
+```
+
+## Passwort-Hashing bei Registrierung
+Das passiert im UserController, und dort wird der PasswordEncryptionService verwendet.
+
+Hier ist, was im Code passiert:
+
+```
+@Autowired
+private PasswordEncryptionService encryptionService;
+
+
+@PostMapping("/register")
+public ResponseEntity<User> registerUser(@RequestBody User newUser) {
+    newUser.setPassword(encryptionService.hashPassword(newUser.getPassword()));
+    userRepository.save(newUser);
+    return ResponseEntity.ok(newUser);
+}
+```
+
