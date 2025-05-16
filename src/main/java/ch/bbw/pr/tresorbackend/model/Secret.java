@@ -25,4 +25,10 @@ public class Secret {
 
    @Column(nullable = false, name="content")
    private String content;
+
+   @Column(nullable = false, name="salt")
+   private String salt;
+
+   @Column(nullable = false, name="iv")
+   private byte[] iv;
 }

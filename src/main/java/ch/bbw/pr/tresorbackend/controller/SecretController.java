@@ -56,12 +56,14 @@ public class SecretController {
       System.out.println("SecretController.createSecret, input validation passed");
 
       User user = userService.findByEmail(newSecret.getEmail());
-
+      String salt = EncryptUtil.generateSalt(16);
+      byte[] iv = EncryptUtil.generateIv().getIV();
       //transfer secret and encrypt content
       Secret secret = new Secret(
             null,
             user.getId(),
-            new EncryptUtil(newSecret.getEncryptPassword()).encrypt(newSecret.getContent().toString())
+            new EncryptUtil(newSecret.getEncryptPassword(), salt,iv).encrypt(newSecret.getContent().toString()),
+              salt,iv
       );
       //save secret in db
       secretService.createSecret(secret);
@@ -87,7 +89,7 @@ public class SecretController {
       //Decrypt content
       for(Secret secret: secrets) {
          try {
-            secret.setContent(new EncryptUtil(credentials.getEncryptPassword()).decrypt(secret.getContent()));
+            secret.setContent(new EncryptUtil(credentials.getEncryptPassword(), secret.getSalt(), secret.getIv()).decrypt(secret.getContent()));
          } catch (EncryptionOperationNotPossibleException e) {
             System.out.println("SecretController.getSecretsByUserId " + e + " " + secret);
             secret.setContent("not encryptable. Wrong password?");
@@ -114,7 +116,7 @@ public class SecretController {
       //Decrypt content
       for(Secret secret: secrets) {
          try {
-            secret.setContent(new EncryptUtil(credentials.getEncryptPassword()).decrypt(secret.getContent()));
+            secret.setContent(new EncryptUtil(credentials.getEncryptPassword(), secret.getSalt(), secret.getIv()).decrypt(secret.getContent()));
          } catch (EncryptionOperationNotPossibleException e) {
             System.out.println("SecretController.getSecretsByEmail " + e + " " + secret);
             secret.setContent("not encryptable. Wrong password?");
@@ -182,7 +184,7 @@ public class SecretController {
       }
       //check if Secret can be decrypted with password
       try {
-         new EncryptUtil(newSecret.getEncryptPassword()).decrypt(dbSecrete.getContent());
+         new EncryptUtil(newSecret.getEncryptPassword(), dbSecrete.getSalt(), dbSecrete.getIv()).decrypt(dbSecrete.getContent());
       } catch (EncryptionOperationNotPossibleException e) {
          System.out.println("SecretController.updateSecret, invalid password");
          JsonObject obj = new JsonObject();
@@ -191,11 +193,14 @@ public class SecretController {
          System.out.println("SecretController.updateSecret failed:" + json);
          return ResponseEntity.badRequest().body(json);
       }
+
+      String salt = EncryptUtil.generateSalt(16);
+      byte[] iv = EncryptUtil.generateIv().getIV();
       //modify Secret in db.
       Secret secret = new Secret(
             secretId,
             user.getId(),
-            new EncryptUtil(newSecret.getEncryptPassword()).encrypt(newSecret.getContent().toString())
+            new EncryptUtil(newSecret.getEncryptPassword(), salt, iv).encrypt(newSecret.getContent().toString()), salt, iv
       );
       Secret updatedSecret = secretService.updateSecret(secret);
       //save secret in db
