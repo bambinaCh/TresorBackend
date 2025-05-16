@@ -49,14 +49,15 @@ public class EncryptUtil {
    }
 
    public String decrypt(String data) {
-      try {
-         Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
-         cipher.init(Cipher.DECRYPT_MODE, secretKey);
-         byte[] decrypted = cipher.doFinal(Base64.getDecoder().decode(data));
-         return new String(decrypted, StandardCharsets.UTF_8);
-      } catch (Exception e) {
-         System.out.println("Fehler bei der Entschluesselung: " + e.getMessage());
-         return null;
+      try{
+         Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
+         cipher.init(Cipher.DECRYPT_MODE, this.secretKey, this.iv);
+         byte[] cipherText = cipher.doFinal(data.getBytes());
+         return Base64.getEncoder()
+                 .encodeToString(cipherText);
+      } catch(Exception e){
+         e.printStackTrace();
       }
+      return null;
    }
 }
