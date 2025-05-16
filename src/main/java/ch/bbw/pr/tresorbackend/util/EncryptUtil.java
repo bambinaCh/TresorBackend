@@ -36,7 +36,7 @@ public class EncryptUtil {
    }
 
    public String encrypt(String data) {
-          Cipher cipher = Cipher.getInstance(algorithm);
+          Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
          cipher.init(Cipher.ENCRYPT_MODE, key, iv);
          byte[] cipherText = cipher.doFinal(input.getBytes());
          return Base64.getEncoder()
