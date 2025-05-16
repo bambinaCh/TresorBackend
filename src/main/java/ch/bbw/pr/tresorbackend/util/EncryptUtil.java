@@ -36,11 +36,16 @@ public class EncryptUtil {
    }
 
    public String encrypt(String data) {
+      try{
           Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
-         cipher.init(Cipher.ENCRYPT_MODE, key, iv);
-         byte[] cipherText = cipher.doFinal(input.getBytes());
+         cipher.init(Cipher.ENCRYPT_MODE, this.secretKey, this.iv);
+         byte[] cipherText = cipher.doFinal(data.getBytes());
          return Base64.getEncoder()
                  .encodeToString(cipherText);
+   } catch(Exception e){
+         e.printStackTrace();
+      }
+      return null;
    }
 
    public String decrypt(String data) {
