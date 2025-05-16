@@ -37,7 +37,7 @@ docker run --name tresordb -e MYSQL_ROOT_PASSWORD=1234 -p 3306:3306 -d docker.io
 see Dockerfile
 
 ```Bash
-docker build -t tresorbackendimg .
+    docker build -t tresorbackendimg .
 ```
 
 
@@ -45,7 +45,7 @@ docker build -t tresorbackendimg .
 ## Start container local
 
 ```Bash
-docker run -p 8080:8080 --name tresorbackend tresorbackendimg
+    docker run -p 8080:8080 --name tresorbackend tresorbackendimg
 ```
 
 (c) P.Rutschmann
