@@ -37,7 +37,7 @@ INSERT INTO `user` (`id`, `first_name`, `last_name`, `email`, `password`) VALUES
 CREATE TABLE secret (
     id int NOT NULL AUTO_INCREMENT,
     user_id int NOT NULL,
-    content json NOT NULL,
+    content text NOT NULL,
     PRIMARY KEY (id)
 );
 
