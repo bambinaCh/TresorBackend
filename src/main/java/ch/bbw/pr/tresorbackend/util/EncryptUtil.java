@@ -17,8 +17,10 @@ import org.jasypt.util.text.AES256TextEncryptor;
 public class EncryptUtil {
 
    private SecretKeySpec secretKey;
+   private String salt;
+   private byte[] iv;
 
-   public EncryptUtil(String password) {
+   public EncryptUtil(String password, String salt, byte[] iv)  {
       try {
          byte[] key = password.getBytes(StandardCharsets.UTF_8);
          MessageDigest sha = MessageDigest.getInstance("SHA-256");
@@ -28,18 +30,15 @@ public class EncryptUtil {
       } catch (Exception e) {
          System.out.println("Fehler beim Schlüsselaufbau: " + e.getMessage());
       }
+      this.salt = salt;
    }
 
    public String encrypt(String data) {
-      try {
-         Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
-         cipher.init(Cipher.ENCRYPT_MODE, secretKey);
-         byte[] encrypted = cipher.doFinal(data.getBytes(StandardCharsets.UTF_8));
-         return Base64.getEncoder().encodeToString(encrypted);
-      } catch (Exception e) {
-         System.out.println("Fehler bei der Verschluesselung: " + e.getMessage());
-         return null;
-      }
+          Cipher cipher = Cipher.getInstance(algorithm);
+         cipher.init(Cipher.ENCRYPT_MODE, key, iv);
+         byte[] cipherText = cipher.doFinal(input.getBytes());
+         return Base64.getEncoder()
+                 .encodeToString(cipherText);
    }
 
    public String decrypt(String data) {
