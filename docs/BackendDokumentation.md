@@ -62,6 +62,22 @@ Hash-Verfahren wie SHA-256 oder MD5 sind für Geschwindigkeit optimiert – was 
 3. `BCrypt.checkpw()` vergleicht das Ergebnis mit dem gespeicherten Hash.
 4. Stimmen die Hashes ueberein, ist der Login erfolgreich.
 
+## Verschlüsselung von Secrets (AES-GCM)
+Warum Verschlüsselung und kein Hashing?
+Secrets (z. B. Kreditkarten, Notizen) müssen wiederhergestellt werden können, deshalb ist eine symmetrische Verschlüsselung (AES) nötig.
+
+## Ablauf:
+1. Benutzer gibt ein EncryptPassword ein
+
+2. Es wird ein Salt und ein zufälliger IV (Initialization Vector) generiert
+
+3. Ein AES-Schlüssel wird aus Passwort und Salt mit PBKDF2WithHmacSHA256 generiert
+
+4. Secret wird verschlüsselt und als Base64 gespeichert
+
+## Entschlüsselung:
+Beim Abrufen des Secrets wird aus Eingabepasswort + Salt erneut der Schlüssel erzeugt und der verschlüsselte Text entschlüsselt.
+
 ---
 
 ## Anwendung von Pepper in Spring Boot

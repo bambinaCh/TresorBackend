@@ -59,6 +59,7 @@ public class EncryptUtil {
       return null;
    }
 
+
    public static GCMParameterSpec generateIv() {
 
       byte[] iv = new byte[12];
