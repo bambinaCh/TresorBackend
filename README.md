@@ -21,6 +21,17 @@ see [SecretRequests.http](httprequest/SecretRequests.http)
 
 see [application.properties](src/main/resources/application.properties)
 
+
+## Start MySQL
+```Bash
+docker run --name tresordb -e MYSQL_ROOT_PASSWORD=1234 -p 3306:3306 -d docker.io/library/mysql:latest
+```
+
+## Start MariaDB
+```Bash
+docker run --name tresordb -e MYSQL_ROOT_PASSWORD=1234 -p 3306:3306 -d docker.io/library/mariadb:latest
+```
+
 ## Build image
 
 see Dockerfile
