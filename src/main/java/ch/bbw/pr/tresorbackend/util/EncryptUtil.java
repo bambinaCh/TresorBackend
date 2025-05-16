@@ -1,6 +1,7 @@
 package ch.bbw.pr.tresorbackend.util;
 
 import javax.crypto.Cipher;
+import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -18,7 +19,7 @@ public class EncryptUtil {
 
    private SecretKeySpec secretKey;
    private String salt;
-   private byte[] iv;
+   private GCMParameterSpec iv;
 
    public EncryptUtil(String password, String salt, byte[] iv)  {
       try {
@@ -31,6 +32,7 @@ public class EncryptUtil {
          System.out.println("Fehler beim Schlüsselaufbau: " + e.getMessage());
       }
       this.salt = salt;
+      this.iv = new GCMParameterSpec(128, iv);
    }
 
    public String encrypt(String data) {
