@@ -8,7 +8,10 @@ import java.util.Optional;
 /**
  * UserRepository
  * @author Peter Rutschmann
+ * @AUTHOR cj
  */
 public interface UserRepository extends JpaRepository<User, Long> {
    Optional<User> findByEmail(String email);
+//   Optional<User> findByResetToken(String token);
+
 }

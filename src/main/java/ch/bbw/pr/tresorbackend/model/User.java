@@ -1,4 +1,6 @@
 package ch.bbw.pr.tresorbackend.model;
+import java.time.LocalDateTime;
+
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -32,4 +34,5 @@ public class User {
 
    @Column(nullable = false)
    private String password;
+
 }

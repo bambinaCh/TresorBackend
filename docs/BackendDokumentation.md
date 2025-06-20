@@ -149,3 +149,77 @@ Hashing ist eine Einwegfunktion, Verschlüsselung ist umkehrbar
 Das Verschlüsselungspasswort sollte nicht identisch mit dem Login-Passwort sein
 
 Der AES-Schlüssel wird nie gespeichert, sondern aus Benutzereingabe erzeugt
+
+## Passwortschutz & reCAPTCHA (Übersicht)
+
+### Passwortregeln
+- Mindestlänge: **8 Zeichen**
+- Mindestens **1 Großbuchstabe**, **1 Zahl**, **1 Sonderzeichen (@$!%*?&)**
+
+**Frontend-Datei:**  
+`/src/pages/user/RegisterUser.js`  
+→ Zeigt grüne Häkchen bei erfüllten Bedingungen
+
+**Backend-Datei:**  
+`UserController.java` → Methode `isPasswordStrong()`
+
+---
+
+### Passwort-Verschlüsselung
+- Hashing via **BCrypt mit Pepper**
+- Automatisch bei Registrierung + Passwort-Reset
+
+**Dateien:**
+- `PasswordEncryptionService.java`
+- `UserServiceImpl.java`
+
+---
+
+### Google reCAPTCHA v2
+Verhindert Bot-Registrierung.
+
+**Verwendet:**  
+✔️ **reCAPTCHA v2 ("Ich bin kein Roboter")**
+
+**Frontend:**  
+`RegisterUser.js` → integriert `<ReCAPTCHA>`-Komponente  
+Token wird per `registerUser.captchaToken` ans Backend gesendet
+
+**Backend:**  
+`UserController.java` → Methode `isCaptchaValid(String token)`  
+→ prüft Token über Google-API:  
+`https://www.google.com/recaptcha/api/siteverify`
+
+---
+
+### Passwort vergessen (Reset-Flow)
+- `/user/forgot-password` → Eingabe Email
+- Token-Link wird generiert (`uuid`)  
+  → Link: `http://localhost:5173/user/reset-password?token=...`
+- Eingabe neues Passwort
+
+**Dateien:**
+- Frontend:
+    - `ForgotPassword.js`
+    - `ResetPassword.js`
+- Backend:
+    - `UserController.java`
+    - `UserServiceImpl.java`
+
+---
+
+### Proxy-Konfiguration für API-Zugriff (wichtig)
+Falls nötig in `vite.config.js` hinzufügen:
+
+```js
+export default {
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+        secure: false,
+      }
+    }
+  }
+}
