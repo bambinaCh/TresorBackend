@@ -32,7 +32,7 @@ public class UserServiceImpl implements UserService {
    private final PasswordEncryptionService passwordEncryptionService;
 
    /**********************************/
-   //      Token  (RAM, nicht DB)    */
+   //      Token reset passwort  (RAM, nicht DB)    */
     private final Map<String, String> resetTokens = new HashMap<>();
 
    @Override
