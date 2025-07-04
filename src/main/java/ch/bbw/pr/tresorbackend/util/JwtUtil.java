@@ -8,6 +8,8 @@ import io.jsonwebtoken.Claims;
 import java.util.Date;
 import java.util.Base64;
 import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
+
 
 
 public class JwtUtil {
@@ -56,10 +58,12 @@ public class JwtUtil {
     }
 
     public Claims validateTokenAndGetClaims(String token) {
-        return Jwts.parser()
-                .setSigningKey(secret.getBytes(StandardCharsets.UTF_8)) // falls du ein Feld "secret" hast
+        return Jwts.parserBuilder()
+                .setSigningKey(secretKey)
+                .build()
                 .parseClaimsJws(token)
                 .getBody();
     }
+
 
 }
