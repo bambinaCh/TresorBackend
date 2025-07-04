@@ -79,7 +79,8 @@ public class UserController {
               registerUser.getFirstName(),
               registerUser.getLastName(),
               registerUser.getEmail(),
-              passwordService.hashPassword(registerUser.getPassword())
+              passwordService.hashPassword(registerUser.getPassword()),
+              "ROLE_USER"
       );
 
       userService.createUser(user);
