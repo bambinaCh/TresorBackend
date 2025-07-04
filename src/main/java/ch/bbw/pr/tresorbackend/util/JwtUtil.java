@@ -55,5 +55,11 @@ public class JwtUtil {
                 .getBody();
     }
 
+    public Claims validateTokenAndGetClaims(String token) {
+        return Jwts.parser()
+                .setSigningKey(secret.getBytes(StandardCharsets.UTF_8)) // falls du ein Feld "secret" hast
+                .parseClaimsJws(token)
+                .getBody();
+    }
 
 }
